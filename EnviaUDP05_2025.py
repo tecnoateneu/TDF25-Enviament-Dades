@@ -83,7 +83,7 @@ if (len(sys.argv) == 3):
 4
 # print (verbo)
 # print (nomar)
-nomar = "dades.txt"
+#nomar = "dades.txt"
 # obertura d'arxiu 
 try:
   arxiu = open(nomar, 'r')  # obre l'arxiu de comandes en mode lectura
