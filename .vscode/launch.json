@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: EnviaUDP05_2025",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/EnviaUDP05_2025.py",
+      "args": ["-v", "dades.txt"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
