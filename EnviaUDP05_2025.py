@@ -6,10 +6,12 @@
 # modificació: Envia trames individualment a rusc
 # aplica el temps abans d'enviar el paquet
 
+# importa llibreries
 import sys
 import time
 import socket
 
+# inicialització de variables
 temps   =  0
 t0      =  0
 t1      =  0
@@ -32,34 +34,38 @@ t12 = 0.0
 
 npaq = 0
 
-UDP_IP0 = "192.168.10.10"
-UDP_IP1 = "192.168.10.11"
-UDP_IP2 = "192.168.10.12"
-UDP_IP3 = "192.168.10.13"
-UDP_IP4 = "192.168.10.14"
-UDP_IP5 = "192.168.10.15"
-UDP_IP6 = "192.168.10.16"
-UDP_IP7 = "192.168.10.17"
-UDP_IPM = "192.168.10.40"
-UDP_IPR0= "192.168.10.20"
-UDP_IPR1= "192.168.10.21"
-UDP_IPR2= "192.168.10.22"
-UDP_IPR3= "192.168.10.23"
-UDP_IPR4= "192.168.10.24"
-UDP_IPR5= "192.168.10.25"
-UDP_IPR6= "192.168.10.26"
-UDP_IPR7= "192.168.10.27"
-UDP_MCST= "239.192.0.1"
-UDP_BCST= "192.168.10.255"
-UDP_PORT=  4210
-MESSAGE = b"0000"
+UDP_IP0   = "192.168.10.10"
+UDP_IP1   = "192.168.10.11"
+UDP_IP2   = "192.168.10.12"
+UDP_IP3   = "192.168.10.13"
+UDP_IP4   = "192.168.10.14"
+UDP_IP5   = "192.168.10.15"
+UDP_IP6   = "192.168.10.16"
+UDP_IP7   = "192.168.10.17"
+UDP_IPM   = "192.168.10.40"
+UDP_IPDMX = "192.168.10.30"
+UDP_IPR0  = "192.168.10.20"
+UDP_IPR1  = "192.168.10.21"
+UDP_IPR2  = "192.168.10.22"
+UDP_IPR3  = "192.168.10.23"
+UDP_IPR4  = "192.168.10.24"
+UDP_IPR5  = "192.168.10.25"
+UDP_IPR6  = "192.168.10.26"
+UDP_IPR7  = "192.168.10.27"
+UDP_MCST  = "239.192.0.1"
+UDP_BCST  = "192.168.10.255"
+UDP_PORT  =  4210
+MESSAGE   = b"0000"
+
 time.time()
+
 #print("UDP target IP: %s"   % UDP_IP0 )
+
 print("UDP target IP:   192.168.10.xx")
 print("UDP target port: %s" % UDP_PORT)
 print ("")
-#print("message: %s"         % MESSAGE )
 
+#print("message: %s"         % MESSAGE )
 # print ('Number of arguments:', len(sys.argv), 'arguments.')
 # print ('Argument List:', str(sys.argv))
 # print (str(sys.argv[0]))
@@ -80,11 +86,12 @@ if (len(sys.argv) == 3):
   if ((str(sys.argv[1])) == "-v"):
     verbo = 1
     nomar = str(sys.argv[2])
-4
+
 # print (verbo)
 # print (nomar)
-#nomar = "Batega.txt"
+# nomar = "Batega.txt"
 # obertura d'arxiu 
+
 try:
   arxiu = open(nomar, 'r')  # obre l'arxiu de comandes en mode lectura
 except FileNotFoundError as e:
@@ -94,9 +101,13 @@ except FileNotFoundError as e:
 linea= arxiu.readline()             # llegeix la primera línia
 while linea != '':                  # mentre sigui diferent de null
   npaq = npaq + 1
+
 #  print(linea)
+
   llinea=len(linea[0:len(linea)-1]) # eliminem el retorn de carro del final de línia
+
 #  print(llinea)
+
   if (llinea == 4):                 # les línies de 4 dígits son de pauta temporal
     c3 = linea[0:1]                 # comencem la conversió dels 4 dígits en un enter
     c2 = linea[1:2]
@@ -131,6 +142,7 @@ while linea != '':                  # mentre sigui diferent de null
       t0 = ord(c0) - 87
 
   # print(time.time() - t11)
+  
   t12 = t12 + (time.time() - t11)
   t11 =  time.time()   
   temps = 1 + (((t3 * 16) + t2) * 256) + (t1 *16) + t0
@@ -139,8 +151,8 @@ while linea != '':                  # mentre sigui diferent de null
   MESSAGEu = linea[0:len(linea)-1]
   MESSAGE = bytes(MESSAGEu, 'UTF-8')
 
-  if (llinea != 4) & (llinea != 0):    # si no és pauta temporal o línia en blanc
-     if ((llinea == 1) | (llinea == 7)):
+  if (llinea != 4) & (llinea != 0):          # si no és pauta temporal o línia en blanc
+     if ((llinea == 1) | (llinea == 7)):     # Módul de música
         sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM)      # UDP
         sock.sendto(MESSAGE, (UDP_IPM, UDP_PORT))
@@ -159,15 +171,18 @@ while linea != '':                  # mentre sigui diferent de null
         sock.sendto(MESSAGE, (UDP_IPR6, UDP_PORT))
         sock.sendto(MESSAGE, (UDP_IPR7, UDP_PORT))
         print("rele ",MESSAGE, " - " ,MESSAGEu, UDP_IPM, UDP_PORT)
+     elif (llinea == 16):                     # DMX
+        sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM)      # UDP
+        sock.sendto(MESSAGE, (UDP_IPDMX, UDP_PORT))
+        print("dmx ",MESSAGE, " - " ,MESSAGEu, UDP_IPM, UDP_PORT)
      elif (llinea == 392):
-# MULTICAST
-#        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#        sock.sendto(MESSAGE, UDP_MCST, UDP_PORT)        
-#        print("Paquet multicast")
+
 # BROADCAST
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         sock.sendto(MESSAGE, (UDP_BCST, UDP_PORT))
+
 #        sock.close()    # cal sempre?
 #        print("Paquet broadcast")
      
@@ -189,8 +204,10 @@ while linea != '':                  # mentre sigui diferent de null
           r0 = ord(rc0) - 87
     
         rusc = (r1 *16) + r0
-#        print("rusc ",rusc)
 
+#       print("rusc ",rusc)
+
+#       per a tots els ruscs
         if  (rusc == 255):        
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
@@ -204,70 +221,88 @@ while linea != '':                  # mentre sigui diferent de null
           sock.sendto(MESSAGE, (UDP_IP7, UDP_PORT))
           if (verbo == 1):
             print(rusc, " ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       Per cada rusc
+#       rusc 0
         elif (rusc == 0):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP0, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 1
         elif (rusc == 1):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP1, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 2
         elif (rusc == 2):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP2, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 3
         elif (rusc == 3):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP3, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 4
         elif (rusc == 4):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP4, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 5
         elif (rusc == 5):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP5, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 6
         elif (rusc == 6):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP6, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
+#       rusc 7
         elif (rusc == 7):
           sock = socket.socket(socket.AF_INET,     # Internet
                                socket.SOCK_DGRAM)  # UDP
           sock.sendto(MESSAGE, (UDP_IP7, UDP_PORT))
           if (verbo == 1):
             print(rusc, "   ", linea[0:len(linea)-1]) # per debug/ verbose
+
 #            time.sleep(temps/1000)       # aplica el retard
 
 #  time.sleep(temps/1000)       # aplica el retard
