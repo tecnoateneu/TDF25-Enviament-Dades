@@ -108,6 +108,7 @@ while linea != '':                  # mentre sigui diferent de null
 
 #  print(llinea)
 
+# pauta temporal (temporització entre paquets udp)
   if (llinea == 4):                 # les línies de 4 dígits son de pauta temporal
     c3 = linea[0:1]                 # comencem la conversió dels 4 dígits en un enter
     c2 = linea[1:2]
